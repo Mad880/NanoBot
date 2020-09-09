@@ -15,7 +15,7 @@ from cogs.utils.dataIO import dataIO
 from cogs.utils.settings import Settings
 from cogs.utils.embed import Embeds
 
-clist = ['cogs.core', 'cogs.dev', 'cogs.audio', 'cogs.general', 'cogs.overwatch', 'cogs.moderation']
+clist = ['cogs.core', 'cogs.dev', 'cogs.audio', 'cogs.general', 'cogs.overwatch', 'cogs.moderation', 'cogs.error_handler']
 errors = []
 cmds_this_session = []
 
@@ -108,49 +108,12 @@ def initialize(bot_class=Bot):
 		await bot.send_message(bot.get_channel(id="334385091482484736"), embed=bot.embeds.server_leave(server))
 
 	@bot.event
-	async def on_member_ban(member):
-		pass
-
-	@bot.event
-	async def on_command_error(error, ctx):
-		if isinstance(error, discord.ext.commands.errors.CommandNotFound):
-			pass
-		elif isinstance(error, discord.ext.commands.errors.CheckFailure):
-			if str(ctx.command).startswith("cmd"):
-				await bot.send_message(ctx.message.channel, embed=bot.embeds.permission_denied("You lack the required permissions to execute this command"))
-			else:
-				await bot.send_message(ctx.message.channel, embed=bot.embeds.permission_denied())
-		elif isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
-			await bot.send_message(ctx.message.channel, embed=bot.embeds.invalid_syntax("You're missing required arguments! Type `!!help {}` for more help.".format(ctx.command)))
-		elif isinstance(error, TimeoutError):
-			pass
-		elif isinstance(error, discord.ext.commands.DisabledCommand):
-			await bot.send_message(ctx.message.channel, ":tools: This command is disabled!")
-		elif isinstance(error, discord.errors.Forbidden) or isinstance(error, discord.Forbidden):
-			pass
-		elif isinstance(error, discord.ext.commands.errors.NoPrivateMessage):
-			await bot.send_message(ctx.message.channel, embed=bot.embeds.error("This command can't be used in private messages.", ctx))
-		else:
-			if ctx.command:
-				bot.errors.append(error)
-				_type, _value, _traceback = sys.exc_info()
-				bot.logger.error(error.original)
-				if _traceback is not None:
-					bot.logger.error(_traceback)
-				await bot.send_message(ctx.message.channel, embed=bot.embeds.error(error, ctx))
-
-	@bot.event
 	async def on_ready():
 		bot.start_time = time.time()
 		print("Bot Initialized...")
-		print("Logged in as " + bot.user.name + " with ID " + bot.user.id)
-		try:
-			post_stats()
-			await bot.change_presence(game=discord.Game(name='!!help • {} Guilds'.format(len(bot.servers))), status=discord.Status.online)
-		except:
-			logger.error(traceback.format_exc())
-
-	return bot
+		print(f"Logged in as {bot.user.name} with the ID of {bot.user.id}")
+		post_stats()
+		await bot.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.playing, name=f"!!help • {len(bot.guilds)}"))
 
 def post_stats():
 	payload = {"server_count":int(len(bot.servers))}
@@ -190,8 +153,6 @@ def logger_config(bot):
 		'%(asctime)s %(levelname)s %(module)s %(funcName)s %(lineno)d: '
 		'%(message)s', datefmt='[%I:%M:%S %p]'))
 	api_logger.addHandler(api_handler)
-
-	return logger
 
 def main(bot):
 	check_folders()
