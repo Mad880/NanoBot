@@ -10,7 +10,7 @@ from .utils.embed import Embeds
 
 log = logging.getLogger("bot.moderation")
 
-class Moderation:
+class Moderation(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
@@ -56,7 +56,7 @@ class Moderation:
             embed.add_field(name="> Version", value="**• NanoBot:** 2.0\n**• discord.py:** {}\n**• Python:** {}".format(discord.__version__, pyver))
             embed.add_field(name="> Misc", value="**• Website:** [Go!](https://nanobot-discord.github.io)\n**• Discord:** [Join!](https://discord.gg/eDRnXd6)")
             log.info("Created Embed")
-            await self.bot.say(embed=embed)
+            await ctx.send(embed=embed)
         except:
             raise       
             
@@ -108,7 +108,7 @@ class Moderation:
         embed.add_field(name="Region", value=server.region)
         embed.add_field(name="Custom Emoji", value=len(server.emojis))
         embed.add_field(name="Created At", value=server.created_at)
-        await self.bot.send_message(ctx.message.channel, embed=embed)
+        await ctx.send(embed=embed)
 
     @commands.command(pass_context=True, no_pm=True, aliases=['userinfo', 'member', 'memberinfo', 'profile'])
     async def user(self, ctx, *, user : discord.User = None):
@@ -148,7 +148,7 @@ class Moderation:
         e.add_field(name="Roles", value=usr_roles)
         e.add_field(name="Color", value=str(ctx.message.author.color))
         e.set_thumbnail(url=user.avatar_url)
-        await self.bot.send_message(ctx.message.channel, embed=e)
+        await ctx.send(embed=e)
 
 def setup(bot):
     n = Moderation(bot)
