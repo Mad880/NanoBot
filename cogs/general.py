@@ -6,7 +6,7 @@ import logging
 
 log = logging.getLogger("bot.general")
 
-class Fun:
+class Fun(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
@@ -43,7 +43,7 @@ class Fun:
                 break
         embed.set_footer(text="{}".format("http://random.dog/" + str(dog)))
         embed.set_image(url="http://random.dog/" + str(dog))
-        await self.bot.send_message(ctx.message.channel, embed=embed)
+        await ctx.send(embed=embed)
 
     @commands.command(pass_context=True)
     async def cat(self, ctx): # !!cat
@@ -61,7 +61,7 @@ class Fun:
                 break
         embed.set_footer(text="{}".format(str(cat)))
         embed.set_image(url=str(cat))
-        await self.bot.send_message(ctx.message.channel, embed=embed)
+        await ctx.send(embed=embed)
 
     @commands.command(name="8ball")
     async def _8ball(self, *, question : str):
@@ -70,9 +70,9 @@ class Fun:
         ["Reply hazy, try again.", "Concentrate and ask again.", "Better not tell you now.", "Cannot predict now.", "Ask again later."],
         ["My sources say no.", "Outlook not so good.", "Very doubtful.", "My reply is no.", "Don't count on it."]]
         if "?" in question:
-            await self.bot.say(":8ball:" + random.choice(random.choice(responses)))
+            await ctx.send(":8ball:" + random.choice(random.choice(responses)))
         else:
-            await self.bot.say("That doesn't look like a question.")
+            await ctx.send("That doesn't look like a question.")
 
 def setup(bot):
     n = Fun(bot)
